@@ -1,129 +1,113 @@
-# Alzheimer's Disease Classification from MRI Images Using Deep Learning
+# 🧠 Alzheimer's Disease Classification Using Deep Learning
 
-A complete educational/research starter project that classifies MRI image files into:
-- CN: Cognitively Normal
-- MCI: Mild Cognitive Impairment
-- AD: Alzheimer's Disease
+An AI-based MRI image classification web application built using **TensorFlow, EfficientNet-B0, and Streamlit**. The project classifies brain MRI images into four categories and provides prediction probabilities, Grad-CAM visualizations, and downloadable reports.
 
-It uses EfficientNetB0 transfer learning, patient-independent folder-based image datasets,
-evaluation metrics, confusion matrix, prediction, and Grad-CAM visualization through Streamlit.
+## 🚀 Features
 
-## Important
-This is a research/educational prototype, NOT a medical diagnostic device.
+- Upload a brain MRI image through a web interface.
+- Predict one of four dataset categories:
+  - Mild Demented
+  - Moderate Demented
+  - Non Demented
+  - Very Mild Demented
+- Display prediction confidence and class probabilities.
+- Generate a Grad-CAM heatmap to visualize image regions influencing the model's prediction.
+- Download prediction reports and Grad-CAM images.
+- Download a complete PDF analysis report.
+- View a confusion matrix generated during model evaluation.
 
-## 1. Requirements
-- Windows 10/11
-- Python 3.11
-- VS Code recommended
-- A GPU is optional. CPU training is possible but slower.
+## 🛠️ Technologies Used
 
-## 2. Setup
+- Python
+- TensorFlow / Keras
+- EfficientNet-B0
+- Streamlit
+- NumPy
+- Pillow (PIL)
+- Matplotlib
+- ReportLab
 
-PowerShell:
-```powershell
+## 📁 Project Structure
+
+```text
+Alzheimer-MRI-Classification/
+├── app.py
+├── config.py
+├── model.py
+├── data_loader.py
+├── train.py
+├── evaluate.py
+├── predict.py
+├── gradcam.py
+├── prepare_dataset.py
+├── convert_dataset.py
+├── requirements.txt
+├── models/
+│   ├── alzheimer_efficientnet.keras
+│   └── class_names.txt
+├── outputs/
+│   └── confusion_matrix.png
+└── README.md
+```
+
+## ⚙️ Installation and Setup
+
+### 1. Clone the repository
+
+```bash
+git clone https://github.com/divyadewangan0804/Alzheimer-MRI-Classification.git
 cd Alzheimer-MRI-Classification
+```
+
+### 2. Create and activate a virtual environment
+
+Windows PowerShell:
+
+```powershell
 python -m venv .venv
-Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
-.venv\Scripts\Activate.ps1
-python -m pip install --upgrade pip
-pip install -r requirements.txt
+.\.venv\Scripts\Activate.ps1
 ```
 
-## 3. Dataset format
+### 3. Install dependencies
 
-Put your licensed/publicly obtained image dataset under `data/raw/`:
-
-```text
-data/
-└── raw/
-    ├── CN/
-    │   ├── image001.jpg
-    │   └── ...
-    ├── MCI/
-    │   ├── image101.jpg
-    │   └── ...
-    └── AD/
-        ├── image201.jpg
-        └── ...
+```bash
+python -m pip install -r requirements.txt
+python -m pip install reportlab
 ```
 
-Accepted image types: `.jpg`, `.jpeg`, `.png`, `.bmp`, `.tif`, `.tiff`.
+### 4. Run the application
 
-Do NOT claim a dataset is ADNI/OASIS unless it actually came from that source and you have the appropriate access/permission.
-
-## 4. Split dataset
-
-```powershell
-python prepare_dataset.py --input data/raw --output data/split --train 0.70 --val 0.15 --test 0.15
+```bash
+python -m streamlit run app.py
 ```
 
-This creates:
+Open the local URL shown in the terminal, usually `http://localhost:8501`.
 
-```text
-data/split/
-├── train/
-├── val/
-└── test/
-```
+## 🧪 Model Evaluation
 
-The script uses a deterministic random seed.
+The project uses a trained EfficientNet-B0-based image classification model.
 
-## 5. Train
+The current recorded test accuracy is approximately **58.05%**. Performance varies by class, and the model requires further improvement before any practical clinical use.
 
-```powershell
-python train.py
-```
+Evaluation outputs include a classification report and confusion matrix.
 
-The trained model is saved to:
-`models/alzheimer_efficientnet.keras`
+## 🔍 Explainable AI with Grad-CAM
 
-Training history is saved to:
-`outputs/training_history.csv`
+Grad-CAM generates a heatmap highlighting image regions that influenced the model's prediction. This provides a visual explanation of model behavior; it is not a verified medical lesion map.
 
-Plots are saved to:
-`outputs/training_curves.png`
+## 📦 Dataset
 
-## 6. Evaluate
+The dataset contains four MRI image categories. The dataset directory is excluded from this Git repository, so users must obtain the dataset separately and arrange it according to the project's expected folder structure before training or evaluation.
 
-```powershell
-python evaluate.py
-```
+Please verify the dataset's license and sharing conditions before redistributing any images.
 
-Outputs:
-- accuracy
-- classification report
-- confusion matrix
-- confusion matrix image
+## ⚠️ Limitations and Medical Disclaimer
 
-## 7. Predict one image
+This project is intended for **educational and research purposes only**. It is not a medical diagnostic device and must not be used to diagnose Alzheimer's disease or guide treatment. Predictions may be incorrect. Consult qualified healthcare professionals for medical assessment.
 
-```powershell
-python predict.py --image "path\to\mri.jpg"
-```
+## 👩‍💻 Author
 
-## 8. Run web app
+**Divya Dewangan**
 
-```powershell
-streamlit run app.py
-```
+GitHub: [@divyadewangan0804](https://github.com/divyadewangan0804)
 
-Then open the local URL shown by Streamlit.
-
-## 9. Project pipeline
-
-MRI image
--> preprocessing
--> EfficientNetB0
--> 3-class prediction
--> confidence
--> Grad-CAM
--> Streamlit interface
-
-## 10. Notes on medical imaging
-The supplied implementation is intentionally image-file based so it can run on common public
-2D MRI image datasets. If your source data is NIfTI/DICOM, convert/process it according to the
-dataset's official documentation before placing the resulting images in the class folders.
-
-For a research-grade system, split data at the patient level rather than allowing slices from
-the same patient to appear in both training and testing. External validation on an independent
-dataset is also recommended.
